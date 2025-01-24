@@ -130,6 +130,12 @@ export default class Renderer {
     const existingSkin = this._skins.get(obj);
     if (existingSkin) return existingSkin;
 
+    const skin = this._createSkin(obj);
+    this._skins.set(obj, skin);
+    return skin;
+  }
+
+  public _createSkin(obj: Costume | SpeechBubble): Skin {
     let skin;
 
     if (obj instanceof Costume) {
@@ -142,7 +148,6 @@ export default class Renderer {
       // If it's not a costume, assume it's a speech bubble.
       skin = new SpeechBubbleSkin(this, obj);
     }
-    this._skins.set(obj, skin);
     return skin;
   }
 
@@ -322,6 +327,7 @@ export default class Renderer {
       Matrix.translate(penMatrix, penMatrix, -0.5, -0.5);
 
       this._renderSkin(
+        undefined,
         this._penSkin,
         options.drawMode,
         penMatrix,
@@ -441,6 +447,7 @@ export default class Renderer {
   }
 
   private _renderSkin(
+    sprite: Sprite | undefined,
     skin: Skin,
     drawMode: DrawMode,
     matrix: MatrixType,
@@ -452,7 +459,7 @@ export default class Renderer {
   ): void {
     const gl = this.gl;
 
-    const skinTexture = skin.getTexture(scale * this._screenSpaceScale);
+    const skinTexture = skin.getTexture(scale * this._screenSpaceScale, sprite);
     // Skip rendering the skin if it has no texture.
     if (!skinTexture) return;
 
@@ -507,6 +514,7 @@ export default class Renderer {
     const drawable = this._getDrawable(sprite);
 
     this._renderSkin(
+      sprite instanceof Sprite ? sprite : undefined,
       this._getSkin(sprite.costume),
       options.drawMode,
       drawable.getMatrix(),
@@ -529,6 +537,7 @@ export default class Renderer {
       ) as SpeechBubbleSkin;
 
       this._renderSkin(
+        undefined,
         speechBubbleSkin,
         options.drawMode,
         this._calculateSpeechBubbleMatrix(sprite, speechBubbleSkin),

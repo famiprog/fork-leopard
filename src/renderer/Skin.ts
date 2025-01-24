@@ -1,4 +1,5 @@
 import type Renderer from "../Renderer";
+import { Sprite } from "../Sprite";
 
 export default abstract class Skin {
   protected renderer: Renderer;
@@ -17,7 +18,10 @@ export default abstract class Skin {
    * Get the skin's texture at a given screen-space scale.
    * @param scale The screen-space scale factor for the texture, as a ratio of screen pixels to texture pixels.
    */
-  public abstract getTexture(scale: number): WebGLTexture | null;
+  public abstract getTexture(
+    scale: number,
+    sprite?: Sprite
+  ): WebGLTexture | null;
 
   /**
    * Gets the raster ImageData for a skin's texture at a given screen-space scale.
@@ -30,7 +34,9 @@ export default abstract class Skin {
     image: HTMLImageElement | HTMLCanvasElement | null,
     filtering:
       | WebGLRenderingContext["NEAREST"]
-      | WebGLRenderingContext["LINEAR"]
+      | WebGLRenderingContext["LINEAR"],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    sprite?: Sprite
   ): WebGLTexture {
     const gl = this.gl;
     const glTexture = gl.createTexture();

@@ -1,10 +1,11 @@
 import type Renderer from "../Renderer";
+import { Sprite } from "../Sprite";
 import Skin from "./Skin";
 
 export default class BitmapSkin extends Skin {
   private _image: HTMLImageElement;
   private _imageData: ImageData | null;
-  private _texture: WebGLTexture | null;
+  protected _texture: WebGLTexture | null;
 
   public constructor(renderer: Renderer, image: HTMLImageElement) {
     super(renderer);
@@ -34,14 +35,14 @@ export default class BitmapSkin extends Skin {
     return this._imageData;
   }
 
-  public getTexture(): WebGLTexture | null {
+  public getTexture(scale: number, sprite?: Sprite): WebGLTexture | null {
     // Make sure to handle potentially non-loaded textures
     const image = this._image;
     if (!image.complete) return null;
 
     if (this._texture === null) {
       // Use nearest-neighbor (i.e. blocky) texture filtering for bitmaps
-      this._texture = super._makeTexture(image, this.gl.NEAREST);
+      this._texture = this._makeTexture(image, this.gl.NEAREST, sprite);
     }
     return this._texture;
   }

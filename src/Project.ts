@@ -41,7 +41,7 @@ export default class Project {
     }
     this.stage._project = this;
 
-    this.renderer = new Renderer(this, null);
+    this.renderer = this.createRenderer();
     this.input = new Input(this.stage, this.renderer.stage, (key) => {
       void this.fireTrigger(Trigger.KEY_PRESSED, { key });
     });
@@ -64,6 +64,10 @@ export default class Project {
 
     // Render project as fast as possible
     this._renderLoop();
+  }
+
+  protected createRenderer(): Renderer {
+    return new Renderer(this, null);
   }
 
   public attach(renderTarget: string | HTMLElement): void {
@@ -155,7 +159,7 @@ export default class Project {
     void this._startTriggers(triggersToStart);
   }
 
-  private step(): void {
+  protected step(): void {
     this._cachedLoudness = null;
     this._stepEdgeActivatedTriggers();
 
